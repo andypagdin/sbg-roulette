@@ -14,6 +14,15 @@ type player struct {
 
 var players = make([]*player, 0)
 
+func getPlayer(id string) (*player, string) {
+	for _, n := range players {
+		if n.ID.String() == id {
+			return n, ""
+		}
+	}
+	return nil, "Player not found"
+}
+
 func playersHandlerGet(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, players)
 }

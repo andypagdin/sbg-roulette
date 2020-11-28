@@ -42,3 +42,27 @@ func TestPlayersHandlerPost(t *testing.T) {
 		t.Errorf("Expected player Name to be 'Foo'. Got '%s'", m.Name)
 	}
 }
+
+func TestGetPlayer(t *testing.T) {
+	clearPlayers()
+
+	plr := addPlayer()
+	foundPlr, foundPlrErr := getPlayer(plr.ID.String())
+	notFoundPlr, notFoundPlrErr := getPlayer("123-456-789")
+
+	if foundPlrErr != "" {
+		t.Errorf("Expected player found to be ''. Got '%s'", foundPlrErr)
+	}
+
+	if foundPlr.ID != plr.ID {
+		t.Errorf("Expected player ID '%s'. Got '%s'", plr.ID, foundPlr.ID)
+	}
+
+	if notFoundPlrErr != "Player not found" {
+		t.Errorf("Expected player error 'Player not found'. Got '%s'", notFoundPlrErr)
+	}
+
+	if notFoundPlr != nil {
+		t.Errorf("Expected player to be 'Nil'. Got '%v'", notFoundPlr)
+	}
+}

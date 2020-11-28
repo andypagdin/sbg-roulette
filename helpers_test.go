@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/google/uuid"
 )
 
 func checkResponseCode(t *testing.T, expected, actual int) {
@@ -24,4 +26,20 @@ func clearTables() {
 
 func clearPlayers() {
 	players = make([]*player, 0)
+}
+
+func addTable() *table {
+	table := new(table)
+	table.ID = uuid.New()
+	table.Players = make([]*player, 0)
+	tables = append(tables, table)
+	return table
+}
+
+func addPlayer() *player {
+	player := new(player)
+	player.ID = uuid.New()
+	player.Name = "Foo"
+	players = append(players, player)
+	return player
 }

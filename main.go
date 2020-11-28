@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"encoding/json"
 	"log"
 	"net/http"
 
@@ -14,10 +14,24 @@ func main() {
 
 func router() *mux.Router {
 	r := mux.NewRouter()
-	r.HandleFunc("/", indexHandler).Methods("GET")
+	r.HandleFunc("/v1/tables", tablesHandlerGet).Methods("GET")
+	r.HandleFunc("/v1/tables", tablesHandlerPost).Methods("POST")
 	return r
 }
 
-func indexHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hi there, %s!", r.URL.Path[1:])
+func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
+	response, err := json.Marshal(payload)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+
+	_, err = w.Write(response)
+
+	if err != nil {
+		log.Fatal(err)
+	}
 }

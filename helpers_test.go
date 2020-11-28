@@ -21,3 +21,7 @@ func executeRequest(req *http.Request) *httptest.ResponseRecorder {
 func clearTables() {
 	tables = make([]*table, 0)
 }
+
+func clearPlayers() {
+	players = make([]*player, 0)
+}

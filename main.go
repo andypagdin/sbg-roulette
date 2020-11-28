@@ -16,6 +16,8 @@ func router() *mux.Router {
 	r := mux.NewRouter()
 	r.HandleFunc("/v1/tables", tablesHandlerGet).Methods("GET")
 	r.HandleFunc("/v1/tables", tablesHandlerPost).Methods("POST")
+	r.HandleFunc("/v1/players", playersHandlerGet).Methods("GET")
+	r.HandleFunc("/v1/players", playersHandlerPost).Methods("POST")
 	return r
 }
 
@@ -34,4 +36,8 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func respondWithError(w http.ResponseWriter, code int, message string) {
+	respondWithJSON(w, code, map[string]string{"error": message})
 }

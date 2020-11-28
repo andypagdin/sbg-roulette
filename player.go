@@ -38,10 +38,10 @@ func playersHandlerPost(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	plr := new(player)
-	plr.ID = uuid.New()
-	plr.Name = p.Name
+	player := new(player)
+	player.ID = uuid.New()
+	player.Name = p.Name
 
-	players = append(players, plr)
-	respondWithJSON(w, http.StatusOK, plr)
+	players = append(players, player)
+	respondWithJSON(w, http.StatusOK, player)
 }

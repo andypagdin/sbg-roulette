@@ -61,7 +61,6 @@ func tablesHandlePlayerPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	player, err := getPlayer(vars["player-id"])
-
 	if err != "" {
 		respondWithError(w, http.StatusBadRequest, err)
 		return

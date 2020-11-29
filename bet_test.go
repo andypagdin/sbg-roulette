@@ -56,6 +56,9 @@ func TestTablesBetSettleHandlerPost(t *testing.T) {
 	plr6 := addPlayer()
 	plr7 := addPlayer()
 	plr8 := addPlayer()
+	plr9 := addPlayer()
+	plr10 := addPlayer()
+	plr11 := addPlayer()
 
 	addPlayerToTable(plr1, tbl)
 	addPlayerToTable(plr2, tbl)
@@ -65,6 +68,9 @@ func TestTablesBetSettleHandlerPost(t *testing.T) {
 	addPlayerToTable(plr6, tbl)
 	addPlayerToTable(plr7, tbl)
 	addPlayerToTable(plr8, tbl)
+	addPlayerToTable(plr9, tbl)
+	addPlayerToTable(plr10, tbl)
+	addPlayerToTable(plr11, tbl)
 
 	addBetToTable(plr1, tbl, "straight", "10", 100)
 	addBetToTable(plr2, tbl, "straight", "5", 100)
@@ -74,6 +80,9 @@ func TestTablesBetSettleHandlerPost(t *testing.T) {
 	addBetToTable(plr6, tbl, "oddEven", "odd", 100)
 	addBetToTable(plr7, tbl, "highLow", "low", 100)
 	addBetToTable(plr8, tbl, "highLow", "high", 100)
+	addBetToTable(plr9, tbl, "column", "1st12", 100)
+	addBetToTable(plr10, tbl, "column", "2nd12", 100)
+	addBetToTable(plr11, tbl, "column", "3rd12", 100)
 
 	req, _ := http.NewRequest("POST", "/v1/tables/"+tbl.ID.String()+"/bet/settle/10", nil)
 
@@ -110,6 +119,18 @@ func TestTablesBetSettleHandlerPost(t *testing.T) {
 
 	if plr8.Balance != 0 {
 		t.Errorf("Expected plr8 lose balance '0'. Got %.2f", plr8.Balance)
+	}
+
+	if plr9.Balance != 200 {
+		t.Errorf("Expected plr9 win balance '200'. Got %.2f", plr9.Balance)
+	}
+
+	if plr10.Balance != 0 {
+		t.Errorf("Expected plr10 lose balance '0'. Got %.2f", plr10.Balance)
+	}
+
+	if plr11.Balance != 0 {
+		t.Errorf("Expected plr11 lose balance '0'. Got %.2f", plr11.Balance)
 	}
 
 	if len(tbl.Bets) != 0 {

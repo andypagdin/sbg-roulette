@@ -10,6 +10,7 @@ import (
 type table struct {
 	ID      uuid.UUID `json:"id"`
 	Players []*player `json:"players"`
+	Bets    []*bet    `json:"bets"`
 }
 
 var tables = make([]*table, 0)
@@ -40,12 +41,13 @@ func tablesHandlerPost(w http.ResponseWriter, r *http.Request) {
 	table := new(table)
 	table.ID = uuid.New()
 	table.Players = make([]*player, 0)
+	table.Bets = make([]*bet, 0)
 
 	tables = append(tables, table)
 	respondWithJSON(w, http.StatusOK, table)
 }
 
-func tablesHandlePlayerPost(w http.ResponseWriter, r *http.Request) {
+func tablesPlayerHandlerPost(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	table, err := getTable(vars["table-id"])

@@ -43,3 +43,7 @@ func addPlayer() *player {
 	players = append(players, player)
 	return player
 }
+
+func addPlayerToTable(p *player, t *table) {
+	t.Players = append(t.Players, p)
+}

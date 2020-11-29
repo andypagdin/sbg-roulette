@@ -39,7 +39,7 @@ func TestTablesHandlerPost(t *testing.T) {
 	}
 }
 
-func TestTablesHandlerPlayerPost(t *testing.T) {
+func TestTablesPlayerHandlerPost(t *testing.T) {
 	clearTables()
 	clearPlayers()
 

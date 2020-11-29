@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/andypagdin/sbg-roulette/respond"
 	"github.com/google/uuid"
 )
 
@@ -25,7 +26,7 @@ func getPlayer(id string) (*player, string) {
 }
 
 func playersHandlerGet(w http.ResponseWriter, r *http.Request) {
-	respondWithJSON(w, http.StatusOK, players)
+	respond.JSON(w, http.StatusOK, players)
 }
 
 func playersHandlerPost(w http.ResponseWriter, r *http.Request) {
@@ -34,7 +35,7 @@ func playersHandlerPost(w http.ResponseWriter, r *http.Request) {
 	err := decoder.Decode(&p)
 
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		respond.Error(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 	defer r.Body.Close()
@@ -45,5 +46,5 @@ func playersHandlerPost(w http.ResponseWriter, r *http.Request) {
 	player.Balance = 100
 
 	players = append(players, player)
-	respondWithJSON(w, http.StatusOK, player)
+	respond.JSON(w, http.StatusOK, player)
 }

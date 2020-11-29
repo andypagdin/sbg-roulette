@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/andypagdin/sbg-roulette/respond"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 )
@@ -37,7 +38,7 @@ func isPlayerAtTable(table *table, playerID string) string {
 }
 
 func tablesHandlerGet(w http.ResponseWriter, r *http.Request) {
-	respondWithJSON(w, http.StatusOK, tables)
+	respond.JSON(w, http.StatusOK, tables)
 }
 
 func tablesHandlerPost(w http.ResponseWriter, r *http.Request) {
@@ -48,7 +49,7 @@ func tablesHandlerPost(w http.ResponseWriter, r *http.Request) {
 	table.OpenForBets = true
 
 	tables = append(tables, table)
-	respondWithJSON(w, http.StatusOK, table)
+	respond.JSON(w, http.StatusOK, table)
 }
 
 func tablesPlayerHandlerPost(w http.ResponseWriter, r *http.Request) {
@@ -56,24 +57,24 @@ func tablesPlayerHandlerPost(w http.ResponseWriter, r *http.Request) {
 
 	table, err := getTable(vars["table-id"])
 	if err != "" {
-		respondWithError(w, http.StatusBadRequest, err)
+		respond.Error(w, http.StatusBadRequest, err)
 		return
 	}
 
 	err = isPlayerAtTable(table, vars["player-id"])
 	if err != "" {
-		respondWithError(w, http.StatusBadRequest, err)
+		respond.Error(w, http.StatusBadRequest, err)
 		return
 	}
 
 	player, err := getPlayer(vars["player-id"])
 	if err != "" {
-		respondWithError(w, http.StatusBadRequest, err)
+		respond.Error(w, http.StatusBadRequest, err)
 		return
 	}
 
 	table.Players = append(table.Players, player)
-	respondWithJSON(w, http.StatusOK, table)
+	respond.JSON(w, http.StatusOK, table)
 }
 
 func tablesSpinHandlerGet(w http.ResponseWriter, r *http.Request) {
@@ -81,11 +82,11 @@ func tablesSpinHandlerGet(w http.ResponseWriter, r *http.Request) {
 
 	table, err := getTable(vars["table-id"])
 	if err != "" {
-		respondWithError(w, http.StatusBadRequest, err)
+		respond.Error(w, http.StatusBadRequest, err)
 		return
 	}
 	if !table.OpenForBets {
-		respondWithError(w, http.StatusBadRequest, "Settle outstanding bets before spinning")
+		respond.Error(w, http.StatusBadRequest, "Settle outstanding bets before spinning")
 		return
 	}
 
@@ -96,5 +97,5 @@ func tablesSpinHandlerGet(w http.ResponseWriter, r *http.Request) {
 	max := 36
 	outcome := rand.Intn(max-min+1) + min
 
-	respondWithJSON(w, http.StatusOK, outcome)
+	respond.JSON(w, http.StatusOK, outcome)
 }

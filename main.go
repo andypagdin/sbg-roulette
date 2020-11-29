@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
 
@@ -23,25 +22,4 @@ func router() *mux.Router {
 	r.HandleFunc("/v1/players", playersHandlerGet).Methods("GET")
 	r.HandleFunc("/v1/players", playersHandlerPost).Methods("POST")
 	return r
-}
-
-func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
-	response, err := json.Marshal(payload)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(code)
-
-	_, err = w.Write(response)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
-func respondWithError(w http.ResponseWriter, code int, message string) {
-	respondWithJSON(w, code, map[string]string{"error": message})
 }

@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/andypagdin/sbg-roulette/respond"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 )
@@ -31,30 +32,30 @@ func tablesBetHandlerPost(w http.ResponseWriter, r *http.Request) {
 	err := decoder.Decode(&b)
 
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		respond.Error(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 	defer r.Body.Close()
 
 	table, err2 := getTable(vars["table-id"])
 	if err2 != "" {
-		respondWithError(w, http.StatusBadRequest, err2)
+		respond.Error(w, http.StatusBadRequest, err2)
 		return
 	}
 	if !table.OpenForBets {
-		respondWithError(w, http.StatusBadRequest, "Bets are closed wait for next round")
+		respond.Error(w, http.StatusBadRequest, "Bets are closed wait for next round")
 		return
 	}
 
 	err3 := isPlayerAtTable(table, vars["player-id"])
 	if err3 == "" {
-		respondWithError(w, http.StatusBadRequest, "Player must be added to the table before placing a bet")
+		respond.Error(w, http.StatusBadRequest, "Player must be added to the table before placing a bet")
 		return
 	}
 
 	player, err4 := getPlayer(vars["player-id"])
 	if err4 != "" {
-		respondWithError(w, http.StatusBadRequest, err4)
+		respond.Error(w, http.StatusBadRequest, err4)
 		return
 	}
 
@@ -70,7 +71,7 @@ func tablesBetHandlerPost(w http.ResponseWriter, r *http.Request) {
 
 	player.Balance -= b.Amount
 
-	respondWithJSON(w, http.StatusOK, bet)
+	respond.JSON(w, http.StatusOK, bet)
 }
 
 func tablesBetSettleHandlerPost(w http.ResponseWriter, r *http.Request) {
@@ -78,13 +79,13 @@ func tablesBetSettleHandlerPost(w http.ResponseWriter, r *http.Request) {
 
 	table, err1 := getTable(vars["table-id"])
 	if err1 != "" {
-		respondWithError(w, http.StatusBadRequest, err1)
+		respond.Error(w, http.StatusBadRequest, err1)
 		return
 	}
 
 	outcome, err2 := strconv.Atoi(vars["outcome"])
 	if err2 != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid outcome paramater")
+		respond.Error(w, http.StatusBadRequest, "Invalid outcome paramater")
 		return
 	}
 

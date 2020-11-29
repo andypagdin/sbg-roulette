@@ -122,3 +122,26 @@ func TestIsPlayerAtTable(t *testing.T) {
 		t.Errorf("Expected player to not be at table ''. Got '%s'", err2)
 	}
 }
+
+func TestTablesSpinHandlerGet(t *testing.T) {
+	clearTables()
+	clearPlayers()
+
+	tbl := addTable()
+
+	req, _ := http.NewRequest("GET", "/v1/tables/"+tbl.ID.String()+"/spin", nil)
+
+	response := executeRequest(req)
+	checkResponseCode(t, http.StatusOK, response.Code)
+
+	var o int
+	_ = json.Unmarshal(response.Body.Bytes(), &o)
+
+	if o < 0 || o > 36 {
+		t.Errorf("Expected outcome to within game rules '0-36'. Got '%d'", o)
+	}
+
+	if tbl.OpenForBets {
+		t.Errorf("Expected table OpenForBets to be 'false'. Got '%t'", tbl.OpenForBets)
+	}
+}

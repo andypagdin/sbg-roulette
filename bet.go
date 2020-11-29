@@ -34,6 +34,10 @@ func tablesBetHandlerPost(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusBadRequest, err2)
 		return
 	}
+	if !table.OpenForBets {
+		respondWithError(w, http.StatusBadRequest, "Bets are closed wait for next round")
+		return
+	}
 
 	err3 := isPlayerAtTable(table, vars["player-id"])
 	if err3 == "" {

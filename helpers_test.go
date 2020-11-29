@@ -32,6 +32,8 @@ func addTable() *table {
 	table := new(table)
 	table.ID = uuid.New()
 	table.Players = make([]*player, 0)
+	table.Bets = make([]*bet, 0)
+	table.OpenForBets = true
 	tables = append(tables, table)
 	return table
 }

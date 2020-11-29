@@ -1,16 +1,19 @@
 package main
 
 import (
+	"math/rand"
 	"net/http"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 )
 
 type table struct {
-	ID      uuid.UUID `json:"id"`
-	Players []*player `json:"players"`
-	Bets    []*bet    `json:"bets"`
+	ID          uuid.UUID `json:"id"`
+	Players     []*player `json:"players"`
+	Bets        []*bet    `json:"bets"`
+	OpenForBets bool      `json:"openForBets"`
 }
 
 var tables = make([]*table, 0)
@@ -42,6 +45,7 @@ func tablesHandlerPost(w http.ResponseWriter, r *http.Request) {
 	table.ID = uuid.New()
 	table.Players = make([]*player, 0)
 	table.Bets = make([]*bet, 0)
+	table.OpenForBets = true
 
 	tables = append(tables, table)
 	respondWithJSON(w, http.StatusOK, table)
@@ -70,4 +74,27 @@ func tablesPlayerHandlerPost(w http.ResponseWriter, r *http.Request) {
 
 	table.Players = append(table.Players, player)
 	respondWithJSON(w, http.StatusOK, table)
+}
+
+func tablesSpinHandlerGet(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	table, err := getTable(vars["table-id"])
+	if err != "" {
+		respondWithError(w, http.StatusBadRequest, err)
+		return
+	}
+	if !table.OpenForBets {
+		respondWithError(w, http.StatusBadRequest, "Settle outstanding bets before spinning")
+		return
+	}
+
+	table.OpenForBets = false
+
+	rand.Seed(time.Now().UnixNano())
+	min := 0
+	max := 36
+	outcome := rand.Intn(max-min+1) + min
+
+	respondWithJSON(w, http.StatusOK, outcome)
 }

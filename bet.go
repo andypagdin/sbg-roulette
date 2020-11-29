@@ -106,6 +106,8 @@ func getBetOutcome(b *bet, o int) float64 {
 		return getColourBetOutcome(b.Value, o, b.Amount)
 	case "oddEven":
 		return getOddEvenBetOutcome(b.Value, o, b.Amount)
+	case "highLow":
+		return getHighLowBetOutcome(b.Value, o, b.Amount)
 	}
 
 	return 0
@@ -127,6 +129,13 @@ func getColourBetOutcome(v string, o int, a float64) float64 {
 
 func getOddEvenBetOutcome(v string, o int, a float64) float64 {
 	if v == "even" && o%2 == 0 || v == "odd" && o%2 != 0 {
+		return a * 2
+	}
+	return 0
+}
+
+func getHighLowBetOutcome(v string, o int, a float64) float64 {
+	if v == "low" && o >= 1 && o <= 18 || v == "high" && o >= 19 && o <= 36 {
 		return a * 2
 	}
 	return 0

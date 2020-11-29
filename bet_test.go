@@ -48,12 +48,18 @@ func TestTablesBetSettleHandlerPost(t *testing.T) {
 	tbl := addTable()
 	plr1 := addPlayer()
 	plr2 := addPlayer()
+	plr3 := addPlayer()
+	plr4 := addPlayer()
 
 	addPlayerToTable(plr1, tbl)
 	addPlayerToTable(plr2, tbl)
+	addPlayerToTable(plr3, tbl)
+	addPlayerToTable(plr4, tbl)
 
 	addBetToTable(plr1, tbl, "straight", "10", 100)
 	addBetToTable(plr2, tbl, "straight", "5", 100)
+	addBetToTable(plr3, tbl, "colour", "red", 100)
+	addBetToTable(plr4, tbl, "colour", "black", 100)
 
 	req, _ := http.NewRequest("POST", "/v1/tables/"+tbl.ID.String()+"/bet/settle/10", nil)
 
@@ -66,6 +72,14 @@ func TestTablesBetSettleHandlerPost(t *testing.T) {
 
 	if plr2.Balance != 0 {
 		t.Errorf("Expected plr2 lose balance '0'. Got %.2f", plr2.Balance)
+	}
+
+	if plr3.Balance != 200 {
+		t.Errorf("Expected plr3 win balance '200'. Got %.2f", plr3.Balance)
+	}
+
+	if plr4.Balance != 0 {
+		t.Errorf("Expected plr4 lose balance '0'. Got %.2f", plr4.Balance)
 	}
 
 	if len(tbl.Bets) != 0 {

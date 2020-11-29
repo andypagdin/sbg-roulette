@@ -102,6 +102,8 @@ func getBetOutcome(b *bet, o int) float64 {
 	case "straight":
 		v, _ := strconv.Atoi(b.Value)
 		return getStraightBetOutcome(v, o, b.Amount)
+	case "colour":
+		return getColourBetOutcome(b.Value, o, b.Amount)
 	}
 
 	return 0
@@ -110,6 +112,13 @@ func getBetOutcome(b *bet, o int) float64 {
 func getStraightBetOutcome(v int, o int, a float64) float64 {
 	if v == o {
 		return a * 35
+	}
+	return 0
+}
+
+func getColourBetOutcome(v string, o int, a float64) float64 {
+	if v == "red" && o%2 == 0 || v == "black" && o%2 != 0 {
+		return a * 2
 	}
 	return 0
 }

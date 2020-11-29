@@ -8,8 +8,9 @@ import (
 )
 
 type player struct {
-	ID   uuid.UUID `json:"id"`
-	Name string    `json:"name"`
+	ID      uuid.UUID `json:"id"`
+	Name    string    `json:"name"`
+	Balance float64   `json:"balance"`
 }
 
 var players = make([]*player, 0)
@@ -41,6 +42,7 @@ func playersHandlerPost(w http.ResponseWriter, r *http.Request) {
 	player := new(player)
 	player.ID = uuid.New()
 	player.Name = p.Name
+	player.Balance = 100
 
 	players = append(players, player)
 	respondWithJSON(w, http.StatusOK, player)

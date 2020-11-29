@@ -40,3 +40,39 @@ func TestTablesBetHandlerPost(t *testing.T) {
 		t.Errorf("Expected bet Value to be '10'. Got '%s'", b.Value)
 	}
 }
+
+func TestTablesBetSettleHandlerPost(t *testing.T) {
+	clearTables()
+	clearPlayers()
+
+	tbl := addTable()
+	plr1 := addPlayer()
+	plr2 := addPlayer()
+
+	addPlayerToTable(plr1, tbl)
+	addPlayerToTable(plr2, tbl)
+
+	addBetToTable(plr1, tbl, "straight", "10", 100)
+	addBetToTable(plr2, tbl, "straight", "5", 100)
+
+	req, _ := http.NewRequest("POST", "/v1/tables/"+tbl.ID.String()+"/bet/settle/10", nil)
+
+	response := executeRequest(req)
+	checkResponseCode(t, http.StatusOK, response.Code)
+
+	if plr1.Balance != 3500 {
+		t.Errorf("Expected plr1 win balance '3500'. Got %.2f", plr1.Balance)
+	}
+
+	if plr2.Balance != 0 {
+		t.Errorf("Expected plr2 lose balance '0'. Got %.2f", plr2.Balance)
+	}
+
+	if len(tbl.Bets) != 0 {
+		t.Errorf("Expected table bets to be settled '0'. Got %d", len(tbl.Bets))
+	}
+
+	if tbl.OpenForBets != true {
+		t.Errorf("Expected table OpenForBets 'false'. Got %t", tbl.OpenForBets)
+	}
+}

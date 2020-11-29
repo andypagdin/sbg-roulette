@@ -3,12 +3,19 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 )
 
-// Assumption: All incoming bets will have a correctly set type
+/**
+	Assumption: All incoming bets will have a correctly set type.
+	This could be ensured by exposing a 'get board' endpoint which would
+	return all valid board tiles with corresponding bet types and values for
+	the implementer generate the front end with, ensuring the correct
+	bet type is sent on front end interaction.
+**/
 type bet struct {
 	PlayerID uuid.UUID `json:"playerId"`
 	Type     string    `json:"type"`
@@ -45,11 +52,13 @@ func tablesBetHandlerPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	uuid, err4 := uuid.Parse(vars["player-id"])
-	if err4 != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid player ID")
+	player, err4 := getPlayer(vars["player-id"])
+	if err4 != "" {
+		respondWithError(w, http.StatusBadRequest, err4)
 		return
 	}
+
+	uuid, _ := uuid.Parse(vars["player-id"])
 
 	bet := new(bet)
 	bet.PlayerID = uuid
@@ -58,5 +67,54 @@ func tablesBetHandlerPost(w http.ResponseWriter, r *http.Request) {
 	bet.Amount = b.Amount
 
 	table.Bets = append(table.Bets, bet)
+
+	player.Balance -= b.Amount
+
 	respondWithJSON(w, http.StatusOK, bet)
+}
+
+func tablesBetSettleHandlerPost(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	table, err1 := getTable(vars["table-id"])
+	if err1 != "" {
+		respondWithError(w, http.StatusBadRequest, err1)
+		return
+	}
+
+	outcome, err2 := strconv.Atoi(vars["outcome"])
+	if err2 != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid outcome paramater")
+		return
+	}
+
+	for _, b := range table.Bets {
+		result := getBetOutcome(b, outcome)
+		settleBet(result, b.PlayerID.String())
+	}
+
+	table.Bets = make([]*bet, 0)
+	table.OpenForBets = true
+}
+
+func getBetOutcome(b *bet, o int) float64 {
+	switch b.Type {
+	case "straight":
+		v, _ := strconv.Atoi(b.Value)
+		return getStraightBetOutcome(v, o, b.Amount)
+	}
+
+	return 0
+}
+
+func getStraightBetOutcome(v int, o int, a float64) float64 {
+	if v == o {
+		return a * 35
+	}
+	return 0
+}
+
+func settleBet(r float64, id string) {
+	player, _ := getPlayer(id)
+	player.Balance += r
 }

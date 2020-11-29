@@ -42,10 +42,21 @@ func addPlayer() *player {
 	player := new(player)
 	player.ID = uuid.New()
 	player.Name = "Foo"
+	player.Balance = 100
 	players = append(players, player)
 	return player
 }
 
 func addPlayerToTable(p *player, t *table) {
 	t.Players = append(t.Players, p)
+}
+
+func addBetToTable(p *player, t *table, bType string, bValue string, bAmount float64) {
+	bet := new(bet)
+	bet.PlayerID = p.ID
+	bet.Type = bType
+	bet.Value = bValue
+	bet.Amount = bAmount
+	p.Balance -= bAmount
+	t.Bets = append(t.Bets, bet)
 }

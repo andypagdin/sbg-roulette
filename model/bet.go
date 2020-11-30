@@ -33,7 +33,7 @@ func GetBetOutcome(b *Bet, o int) float64 {
 
 func SettleBet(r float64, id string) {
 	player, _ := GetPlayer(id)
-	player.Balance += r
+	player.AddBalance(r)
 }
 
 func getStraightBetOutcome(v int, o int, a float64) float64 {

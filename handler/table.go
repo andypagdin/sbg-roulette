@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/andypagdin/sbg-roulette/model"
-	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 )
 
@@ -15,16 +14,9 @@ func tablesHandlerGet(w http.ResponseWriter, r *http.Request) {
 }
 
 func tablesHandlerPost(w http.ResponseWriter, r *http.Request) {
-	// todo: move into table model
-	table := new(model.Table)
-	table.ID = uuid.New()
-	table.Players = make([]*model.Player, 0)
-	table.Bets = make([]*model.Bet, 0)
-	table.OpenForBets = true
-
-	// todo: move into table model
-	model.Tables = append(model.Tables, table)
-	RespondJSON(w, http.StatusOK, table)
+	var t model.Table
+	t.AddTable()
+	RespondJSON(w, http.StatusOK, t)
 }
 
 func tablesPlayerHandlerPost(w http.ResponseWriter, r *http.Request) {
@@ -48,8 +40,7 @@ func tablesPlayerHandlerPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// todo: move into table model
-	table.Players = append(table.Players, player)
+	table.AddPlayerToTable(player)
 	RespondJSON(w, http.StatusOK, table)
 }
 
@@ -66,8 +57,7 @@ func tablesSpinHandlerGet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// move into table model
-	table.OpenForBets = false
+	table.SetOpenForBets(false)
 
 	rand.Seed(time.Now().UnixNano())
 	min := 0

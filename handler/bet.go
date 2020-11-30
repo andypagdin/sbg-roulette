@@ -20,7 +20,7 @@ import (
 
 func tablesBetHandlerPost(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	var b model.Bet
+	var b *model.Bet
 
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&b)
@@ -54,21 +54,12 @@ func tablesBetHandlerPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	uuid, _ := uuid.Parse(vars["player-id"])
+	b.PlayerID = uuid
+	table.AddBet(b)
 
-	// todo: move into bets model
-	bet := new(model.Bet)
-	bet.PlayerID = uuid
-	bet.Type = b.Type
-	bet.Value = b.Value
-	bet.Amount = b.Amount
+	player.DeductBalance(b.Amount)
 
-	// todo: move into table model
-	table.Bets = append(table.Bets, bet)
-
-	// todo: move into player model
-	player.Balance -= b.Amount
-
-	RespondJSON(w, http.StatusOK, bet)
+	RespondJSON(w, http.StatusOK, b)
 }
 
 func tablesBetSettleHandlerPost(w http.ResponseWriter, r *http.Request) {
@@ -91,7 +82,6 @@ func tablesBetSettleHandlerPost(w http.ResponseWriter, r *http.Request) {
 		model.SettleBet(result, b.PlayerID.String())
 	}
 
-	// todo: move into bets model
-	table.Bets = make([]*model.Bet, 0)
-	table.OpenForBets = true
+	table.ClearBets()
+	table.SetOpenForBets(true)
 }

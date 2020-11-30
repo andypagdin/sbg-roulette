@@ -1,6 +1,7 @@
 ## SBG Roulette API
 
 **Install it**
+
 `go get github.com/andypagdin/sbg-roulette`
 
 **Build it**

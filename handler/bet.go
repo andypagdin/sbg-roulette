@@ -14,7 +14,7 @@ import (
 	Assumption: All incoming bets will have a correctly set type.
 	This could be ensured by exposing a 'get board' endpoint which would
 	return all valid board tiles with corresponding bet types and values for
-	the implementer generate the front end with, ensuring the correct
+	the implementer to generate the front end with, ensuring the correct
 	bet type is sent on front end interaction.
 **/
 

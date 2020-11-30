@@ -43,6 +43,10 @@ func TestTablesBetHandlerPost(t *testing.T) {
 	}
 }
 
+/**
+	Could implement even more tests here, checking against win and lose outcomes for each
+	variation of bet type
+**/
 func TestTablesBetSettleHandlerPost(t *testing.T) {
 	clearTables()
 	clearPlayers()

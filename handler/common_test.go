@@ -24,6 +24,10 @@ func executeRequest(req *http.Request) *httptest.ResponseRecorder {
 	return rr
 }
 
+/**
+	Helper functions to create common data structures for use in tests
+**/
+
 func clearTables() {
 	model.Tables = make([]*model.Table, 0)
 }

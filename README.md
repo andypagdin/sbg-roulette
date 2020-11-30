@@ -4,13 +4,17 @@
 `go get github.com/andypagdin/sbg-roulette`
 
 **Build it**
+
 `cd sbg-roulette`
+
 `go build`
 
 **Run it (:8080)**
+
 `./sbg-roulette`
 
 **Test it**
+
 `go test ./handler -v`
 
 ## Overview

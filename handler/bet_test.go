@@ -1,10 +1,12 @@
-package main
+package handler
 
 import (
 	"bytes"
 	"encoding/json"
 	"net/http"
 	"testing"
+
+	"github.com/andypagdin/sbg-roulette/model"
 )
 
 func TestTablesBetHandlerPost(t *testing.T) {
@@ -21,7 +23,7 @@ func TestTablesBetHandlerPost(t *testing.T) {
 	response := executeRequest(req)
 	checkResponseCode(t, http.StatusOK, response.Code)
 
-	var b bet
+	var b model.Bet
 	_ = json.Unmarshal(response.Body.Bytes(), &b)
 
 	if b.PlayerID != plr.ID {

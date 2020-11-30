@@ -1,4 +1,4 @@
-package respond
+package handler
 
 import (
 	"encoding/json"
@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func JSON(w http.ResponseWriter, code int, payload interface{}) {
+func RespondJSON(w http.ResponseWriter, code int, payload interface{}) {
 	response, err := json.Marshal(payload)
 
 	if err != nil {
@@ -23,6 +23,6 @@ func JSON(w http.ResponseWriter, code int, payload interface{}) {
 	}
 }
 
-func Error(w http.ResponseWriter, code int, message string) {
-	JSON(w, code, map[string]string{"error": message})
+func RespondError(w http.ResponseWriter, code int, message string) {
+	RespondJSON(w, code, map[string]string{"error": message})
 }

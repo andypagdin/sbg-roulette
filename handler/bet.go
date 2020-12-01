@@ -89,4 +89,10 @@ func tablesBetSettleHandlerPost(w http.ResponseWriter, r *http.Request) {
 
 	table.ClearBets()
 	table.SetOpenForBets(true)
+
+	/**
+		Could return a new data structure here that represents a settled bet?
+		returning settled bets with the outcome could allow the implementation to
+		keep track of players history and general betting performance.
+	**/
 }

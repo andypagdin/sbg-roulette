@@ -90,6 +90,7 @@
 ```
 
 **/v1/tables/:table-id/bet/:player-id**
+
 Supported bet type and value payloads
 ```
 Type : "straight", Value : "0-36"

@@ -31,15 +31,40 @@
 ## Endpoints
 **/v1/tables**
 * `GET` : Get all tables
+  * Returns array of table objects
 * `POST` : Create a new table
+  * Returns created table object
+
+```
+{
+  "id": "a79c7873-8bcc", string
+  "players": [],         array
+  "bets": [],            array
+  "openForBets" true,    bool
+}
+```
 
 **/v1/players**
 * `GET` : Get all players
+  * Returns array of player objects
 * `POST` : Create a new player
   * Payload
-    * `{"Name": "PlayerName"}`
+      ```
+      {
+        "name": "player name" string
+      }
+      ```
   * Errors
     * `400 Invalid request payload`
+  * Returns created player object
+
+```
+{
+  "id": "6778fdb3-4a50", string
+  "name: "foo",          string
+  "balance": 100,        float64
+}
+```
 
 **/v1/tables/:table-id/players/:player-id**
 * `POST` : Add a player to a table
@@ -47,29 +72,83 @@
     * `400 Table not found`
     * `400 Player not found`
     * `400 Player is already at this table`
+  * Returns table object with appended player
+
+```
+{
+  "id": "a79c7873-8bcc",
+  "players": [
+    {
+      "id": "6778fdb3-4a50",
+      "name": "John Smith",
+      "balance": 100
+    }
+  ],
+  "bets": [],
+  "openForBets": true
+}
+```
 
 **/v1/tables/:table-id/bet/:player-id**
+Supported bet type and value payloads
+```
+Type : "straight", Value : "0-36"
+Type : "colour",   Value : "red" or "black"
+Type : "oddEven",  Value : "odd" or "even"
+Type : "highLow",  Value : "high" or "low"
+Type : "column",   Value : "1st12" or "2nd12" or "3rd12"
+```
 * `POST` : Place a bet on a table
+  * Payload
+    ```
+    {
+      "type": "colour", string
+      "value: "red",    string
+      "amount": 10,     float64
+    }
+    ```
   * Errors
     * `400 Invalid request payload`
     * `400 Bets are closed wait for next round`
     * `400 Player must be added to the table before placing a bet`
     * `400 Invalid table ID`
     * `400 Invalid player ID`
+  * Returns bet object
+
+```
+{
+  "playerId": "6778fdb3-4a50", string
+  "type": "colour",            string
+  "value": "red",              string
+  "amount": 10,                float64
+}
+```
 
 **/v1/tables/:table-id/bet/settle/:outcome**
 * `POST` : Settle all table bets against a given outcome
   * Errors
     * `400 Invalid table ID`
     * `400 Invalid outcome parameter`
+  * Returns
+
+```
+
+```
 
 **/v1/tables/:table-id/spin**
-* `GET` : "Spin" the roulette wheel to generate table outcome
+* `GET` : "Spin" the roulette wheel to generate a table outcome
   * Errors
     * `400 Invalid table ID`
     * `400 Settle outstanding bets before spinning`
+  * Returns outcome value
 
-## Future improvments
+```
+{
+  10 int
+}
+```
+
+## Future improvements
 * Add table bet limits
 * Add 'GetBoard' endpoint to enforce bet types and values
 * Do not allow players to exceed balance

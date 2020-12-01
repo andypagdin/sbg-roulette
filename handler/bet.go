@@ -53,6 +53,11 @@ func tablesBetHandlerPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if player.Balance-b.Amount < 0 {
+		RespondError(w, http.StatusBadRequest, "Bed amount exceeds player balance")
+		return
+	}
+
 	uuid, _ := uuid.Parse(vars["player-id"])
 	b.PlayerID = uuid
 	table.AddBet(b)

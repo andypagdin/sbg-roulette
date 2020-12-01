@@ -91,7 +91,7 @@
 
 **/v1/tables/:table-id/bet/:player-id**
 
-Supported bet type and value payloads
+Supported bet type and value fields
 ```
 Type : "straight", Value : "0-36"
 Type : "colour",   Value : "red" or "black"
@@ -114,6 +114,7 @@ Type : "column",   Value : "1st12" or "2nd12" or "3rd12"
     * `400 Player must be added to the table before placing a bet`
     * `400 Invalid table ID`
     * `400 Invalid player ID`
+    * `400 Bet amount exceeds player balance`
   * Returns bet object
 
 ```
@@ -126,18 +127,13 @@ Type : "column",   Value : "1st12" or "2nd12" or "3rd12"
 ```
 
 **/v1/tables/:table-id/bet/settle/:outcome**
-* `POST` : Settle all table bets against a given outcome
+* `POST` : Settle all table bets against a given outcome, sets tables `OpenForBets` to true
   * Errors
     * `400 Invalid table ID`
     * `400 Invalid outcome parameter`
-  * Returns
-
-```
-
-```
 
 **/v1/tables/:table-id/spin**
-* `GET` : "Spin" the roulette wheel to generate a table outcome
+* `GET` : "Spin" the roulette wheel to generate a table outcome, sets tables `OpenForBets` to false
   * Errors
     * `400 Invalid table ID`
     * `400 Settle outstanding bets before spinning`
@@ -152,4 +148,3 @@ Type : "column",   Value : "1st12" or "2nd12" or "3rd12"
 ## Future improvements
 * Add table bet limits
 * Add 'GetBoard' endpoint to enforce bet types and values
-* Do not allow players to exceed balance
